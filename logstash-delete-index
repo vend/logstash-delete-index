@@ -69,7 +69,7 @@ sub delete {
             }
 
             if (!$self->{run}) {
-                print "delete index '$index (run=0)\n";
+                print "delete index '$index' (run=0)\n";
                 next;
             }
 
