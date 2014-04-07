@@ -76,7 +76,10 @@ sub delete {
             my $del = $self->request(DELETE => "$uri/$index")
                 or warn $self->errstr;
 
-            my $status = $del->{acknowledged} eq "true" ? "was successful" : "failed";
+            my $status = ($del->{acknowledged} && $del->{acknowledged} eq "true") || ($del->{ok} && $del->{ok} eq "true")
+                ? "was successful"
+                : "failed";
+
             print "delete index '$index' $status\n";
         } elsif (!$self->{run}) {
             print "skip index '$index'\n";
