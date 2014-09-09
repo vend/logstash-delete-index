@@ -104,7 +104,7 @@ sub request {
         my $res = $self->{lwp}->request($req);
 
         if (!$res->is_success) {
-            return $self->errstr("request to elasticsearch failed - ".$res->status_line);
+            die "request to elasticsearch failed - ".$res->status_line;
         }
 
         alarm(0);
