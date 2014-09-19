@@ -61,7 +61,7 @@ sub delete {
     }
 
     foreach my $index (keys %{$res->{indices}}) {
-        if ($index =~ /^$opts{name}\-(\d\d\d\d)\.(\d\d)\.(\d\d)/) {
+        if ($index =~ /^$self->{index}\-(\d\d\d\d)\.(\d\d)\.(\d\d)/) {
             my $itime = "$1$2$3";
 
             if ($itime >= $time) {
@@ -138,7 +138,7 @@ my $progname = do { $0 =~ m!([^/]+)\z!; $1 };
 my $host     = "127.0.0.1:9200";
 my $proto    = "http";
 my $auth     = undef;
-my $name     = "logstash";
+my $index    = "logstash";
 my $delete   = undef;
 my $run      = undef;
 my $help     = undef;
@@ -148,10 +148,10 @@ GetOptions(
     "H|host=s"   => \$host,
     "p|proto=s"  => \$proto,
     "a|auth=s"   => \$auth,
-    "i|index=s"  => \$name,
+    "i|index=s"  => \$index,
     "d|delete=s" => \$delete,
     "r|run"      => \$run,
-    "h|help"     => \$help,
+    "h|help"     => \$help
 ) or exit 1;
 
 if ($help) {
@@ -194,9 +194,9 @@ ES::Index->delete(
     host   => $host,
     proto  => $proto,
     auth   => $auth,
-    name   => $name,
+    index  => $index,
     delete => $delete,
-    run    => $run,
+    run    => $run
 );
 
 exit 0;
