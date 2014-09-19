@@ -61,7 +61,7 @@ sub delete {
     }
 
     foreach my $index (keys %{$res->{indices}}) {
-        if ($index =~ /^logstash\-(\d\d\d\d)\.(\d\d)\.(\d\d)/) {
+        if ($index =~ /^$opts{name}\-(\d\d\d\d)\.(\d\d)\.(\d\d)/) {
             my $itime = "$1$2$3";
 
             if ($itime >= $time) {
@@ -138,6 +138,7 @@ my $progname = do { $0 =~ m!([^/]+)\z!; $1 };
 my $host     = "127.0.0.1:9200";
 my $proto    = "http";
 my $auth     = undef;
+my $name     = "logstash";
 my $delete   = undef;
 my $run      = undef;
 my $help     = undef;
@@ -147,6 +148,7 @@ GetOptions(
     "H|host=s"   => \$host,
     "p|proto=s"  => \$proto,
     "a|auth=s"   => \$auth,
+    "i|index=s"  => \$name,
     "d|delete=s" => \$delete,
     "r|run"      => \$run,
     "h|help"     => \$help,
@@ -163,6 +165,8 @@ if ($help) {
     print "    Default: http\n";
     print "-a, --auth <username:password>\n";
     print "    Pass a string to auth via auth basic.\n";
+    print "-i, --index Base name of index index-YY.MM.DD\n";
+    print "    Default: logstash-YY.MM.DD.\n";
     print "-d, --delete <days>\n";
     print "    Delete all indexes that are older than --delete days.\n";
     print "-r, --run\n";
@@ -190,6 +194,7 @@ ES::Index->delete(
     host   => $host,
     proto  => $proto,
     auth   => $auth,
+    name   => $name,
     delete => $delete,
     run    => $run,
 );
