@@ -73,7 +73,26 @@ sub delete {
     my @time = (localtime(time - ($opts{delete} * 86400)))[3,4,5];
     my $time = sprintf("%04d%02d%02d", $time[2] + 1900, $time[1] + 1, $time[0]);
     my $uri  = "$opts{proto}://$opts{host}";
-    my $res  = $self->request(GET => "$uri/_status") or die $self->errstr;
+
+    # Discover Version
+    my $a = $self->request(GET => "$uri/") or die $self->errstr;
+    my %semver = (-major, 0, -minor, 0, -patch, 0);
+    if ($a->{version}->{number} =~ /^(\d+).(\d+).(\d+)$/) {
+        $semver{-major} = $1;
+        $semver{-minor} = $2;
+        $semver{-patch} = $3;
+    } else {
+        print "Could not determine ElasticSearch version";
+        exit 1;
+    }
+
+    # List Indexes
+    my $res;
+    if ($semver{-major} >= 2 && $semver{-minor} >= 3) {
+        $res = $self->request(GET => "$uri/_stats") or die $self->errstr;
+    } else {
+        $res = $self->request(GET => "$uri/_status") or die $self->errstr;
+    }
 
     if (!exists $res->{indices} || !scalar keys %{$res->{indices}}) {
         print "no indices found\n";
